@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
 import { HttpClient } from '@angular/common/http';
+import { Header } from 'primeng/api';
 
 @Injectable({
   providedIn: 'root'
@@ -14,9 +15,13 @@ export class ApiService {
 
   //public endpoints
 
-  registration(){}
+  registration(table: string, data: object){
+    return this.http.post(`${this.server}/public/${table}`, data);
+  }
 
-  login(){}
+  login(data: object){
+    return this.http.post(`${this.server}/public/login`, data);
+  }
 
   lostpass(){}
 
@@ -39,7 +44,7 @@ export class ApiService {
   //private endpoints
 
   selectById(table: string, id: number){
-    return this.http.get(`${this.server}/${table}/${id}`);
+    return this.http.get(`${this.server}/${table}/${id}`, this.tokenHeader());
   }
 
   selectByField(table: string, field: string, op: string, value: string){
@@ -47,7 +52,8 @@ export class ApiService {
   }
 
   selectAll(table: string){
-    return this.http.get(`${this.server}/${table}`);
+    const token = sessionStorage.getItem('token') || '';
+    return this.http.get(`${this.server}/${table}`, {headers: {'Authorization': `Bearer ${token}`}});
   }
 
   insert(){}
@@ -65,5 +71,13 @@ export class ApiService {
   deleteFile(){}
 
 
+  getToken(){
+    return sessionStorage.getItem('token') || '';
+  }
+
+  tokenHeader(){
+    let token = this.getToken();
+    return {headers: {'Authorization': `Bearer ${token}`}};
+  }
 
 }
