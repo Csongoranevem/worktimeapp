@@ -1,0 +1,23 @@
+<div class="card xs:col-12 md:col-6 mx-auto px-3 text-center" id="registration-card">
+    <h1>Registration</h1>
+    <div class="mb-4">
+        <input pInputText placeholder="First Name" [(ngModel)]="firstName" class="w-full" />
+    </div>
+
+    <div class="mb-4">
+        <input pInputText placeholder="Last Name" [(ngModel)]="lastName" class="w-full" />
+    </div>
+
+    <div class="mb-4">
+        <input pInputText type="email" placeholder="Email" [(ngModel)]="user.email" class="w-full" />
+    </div>
+
+    <div class="mb-4">
+        <p-password class="w-full" placeholder="Password" [(ngModel)]="user.password" [toggleMask]="true"></p-password>
+    </div>
+
+    <div class="mb-4">
+        <p-password class="w-full" placeholder="Confirm Password" [(ngModel)]="user.confirmPassword" [toggleMask]="true"></p-password>
+    </div>
+
+<p-button label="Registration" (click)="saveUser()"></p-button>

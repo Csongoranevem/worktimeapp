@@ -1,0 +1,15 @@
+<div class="card xs:col-12 md:col-6 mx-auto px-3 text-center" id="registration-card">
+    <h1>Login</h1>
+    <div class="mb-4">
+        <input pInputText type="email" placeholder="Email" [(ngModel)]="email" class="w-full" />
+    </div>
+
+    <div class="mb-4">
+        <p-password class="w-full" placeholder="Password" [(ngModel)]="password" [toggleMask]="true"></p-password>
+    </div>
+    
+    <div class="mb-4">
+        <p-checkbox label="Remember Me"></p-checkbox>
+    </div>
+
+<p-button label="Login" (click)="login()" class="mb-4"></p-button>

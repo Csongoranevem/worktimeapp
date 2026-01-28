@@ -16,7 +16,7 @@ export class ApiService {
   //public endpoints
 
   registration(table: string, data: object){
-    return this.http.post(`${this.server}/public/${table}`, data);
+    return this.http.post(`${this.server}/${table}/registration`, data);
   }
 
   login(data: object){
@@ -32,7 +32,7 @@ export class ApiService {
   }
 
   readByField(table: string, field: string, op: string, value: string){
-    return this.http.get(`${this.server}/public/${table}/${field}/${op}/${value}`);
+    return this.http.get(`${this.server}/${table}/${field}/${op}/${value}`);
   }
 
   readAll(table : string){
@@ -56,7 +56,10 @@ export class ApiService {
     return this.http.get(`${this.server}/${table}`, {headers: {'Authorization': `Bearer ${token}`}});
   }
 
-  insert(){}
+  insert(table: string, data: object){
+    const token = this.getToken();
+    return this.http.post(`${this.server}/${table}`, data, {headers: {'Authorization': `Bearer ${token}`}});
+  }
 
   update(){}
 
