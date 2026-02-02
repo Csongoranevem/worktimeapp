@@ -47,6 +47,7 @@ export class NavbarComponent {
         icon: 'pi pi-fw pi-home',
         routerLink: '/home'
       },
+      // visible only when not logged in
       {
         label: 'Login',
         icon: 'pi pi-fw pi-sign-in',

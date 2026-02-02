@@ -1,1 +1,61 @@
-<p>worktimes works!</p>
+<div class="card xs:col-12 md:col-6 mx-auto px-3 text-center" id="worktimes-card">
+    <h2>Work Times</h2>
+    <p-button label="New Work Time" (click)="createNewWorkTime()"></p-button>
+    <p-floatlabel>
+        <p-dropdown [options]="users" filter="true" filterPlaceholder="Search user" optionLabel="name"
+            inputId="worktime-dropdown" />
+    </p-floatlabel>
+
+    <ng-template pTemplate="caption">
+        <div class="font-bold">User Work Times</div>
+        <div *ngIf="selectedUser">
+            <p>Name: {{ selectedUser!.name }}</p>
+            <p>Email: {{ selectedUser!.email }}</p>
+        </div>
+    </ng-template>
+
+    <ng-template>
+        <ng-template pTemplate="header">
+            <tr>
+                <th>#</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>startTime</th>
+                <th>endTime</th>
+                <th>Actions</th>
+            </tr>
+        </ng-template>
+        <ng-template pTemplate="body" let-rowIndex="rowIndex">
+            <tr>
+                <td>{{ rowIndex + 1 }}</td>
+                <td>{{ worktimes[rowIndex].userId }}</td>
+                <td>{{ worktimes[rowIndex].startTime }}</td>
+                <td>{{ worktimes[rowIndex].endTime }}</td>
+                <td>
+                    <p-button icon="pi pi-pencil" (click)="editWorkTime(worktimes[rowIndex])"></p-button>
+                    <p-button icon="pi pi-trash" (click)="deleteWorkTime(worktimes[rowIndex].id)"></p-button>
+                </td>
+            </tr>
+        </ng-template>
+    </ng-template>
+
+</div>
+
+
+
+<!--new time modal-->
+<p-dialog header="New Work Time" [modal]="true" [responsive]="true" [style]="{ width: '600px', height: '700px' }"
+    [(visible)]="showDialog">
+
+    <label for="startTime">Start Time</label>
+    <div class="card flex justify-center">
+        <p-datepicker [(ngModel)]="newWorkTime!.startTime" [showTime]="true"></p-datepicker>
+
+    </div>
+    <label for="endTime">End Time</label>
+    <div class="card flex justify-center">
+        <p-datepicker [(ngModel)]="newWorkTime!.endTime" [showTime]="true"></p-datepicker>
+    </div>
+
+    <p-button label="Save" icon="pi pi-check" (click)="saveWorkTime()"></p-button>
+</p-dialog>

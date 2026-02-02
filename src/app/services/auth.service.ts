@@ -18,6 +18,7 @@ export class AuthService {
 
   login(token:string){
     sessionStorage.setItem(this.tokenName, token);
+    console.log('AuthService login, token stored:', token);
     this.isLoggedIn.next(true);
   }
 

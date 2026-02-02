@@ -1,18 +1,61 @@
+<div class="card xs:col-12 md:col-10 lg:col-8 mx-auto px-3 text-center">
+
+  <h1>Users</h1>
+
+  <h3>Registered users list</h3>
+
+
 <div class="card">
-    <p-table [value]="users">
+    <p-table
+      #dt
+      [value]="users"
+      [rows]="10"
+      [rowsPerPageOptions]="[5, 10, 25, 50]"
+      [paginator]="true"
+      [tableStyle]="{ 'min-width': '50rem' }"
+      styleClass="p-datatable-striped"
+      selectionMode="single"
+      [globalFilterFields]="filterFields"
+    >
+
+    <ng-template pTemplate="caption">
+      <div class="flex">
+          <p-iconField iconPosition="left" class="ml-auto">
+              <p-inputIcon>
+                  <i class="pi pi-search"></i>
+              </p-inputIcon>
+              <input
+                  pInputText
+                  type="text"
+                  (input)="handleInput($event)"
+                  placeholder="Search keyword" />
+          </p-iconField>
+      </div>
+  </ng-template>
+
         <ng-template pTemplate="header">
             <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Email</th>
+                <th>#</th>
+                <th pSortableColumn="name" >Name <p-sortIcon field="name" /></th>
+                <th pSortableColumn="email">Email <p-sortIcon field="email" /></th>
+                <th pSortableColumn="reg">Registration <p-sortIcon field="reg" /></th>
+                <th pSortableColumn="last">Last login <p-sortIcon field="last" /></th>
+                <th  class="text-right">Operations</th>
             </tr>
         </ng-template>
-        <ng-template pTemplate="body" let-user>
+        <ng-template pTemplate="body" let-user let-rowIndex="rowIndex">
             <tr>
-                <td>{{ user.id }}</td>
+                <td>{{ rowIndex +1 }}.</td>
                 <td>{{ user.name }}</td>
                 <td>{{ user.email }}</td>
+                <td>{{ user.reg }}</td>
+                <td>{{ user.last }}</td>
+                <td class="text-right"><p-inputSwitch [(ngModel)]="user.status"/> </td>
             </tr>
         </ng-template>
     </p-table>
+</div>
+
+
+
 </div>

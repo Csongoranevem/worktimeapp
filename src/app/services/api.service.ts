@@ -20,7 +20,7 @@ export class ApiService {
   }
 
   login(data: object){
-    return this.http.post(`${this.server}/public/login`, data);
+    return this.http.post(`${this.server}/users/login`, data);
   }
 
   lostpass(){}
@@ -53,6 +53,7 @@ export class ApiService {
 
   selectAll(table: string){
     const token = sessionStorage.getItem('token') || '';
+    console.log('Token in selectAll:', token);
     return this.http.get(`${this.server}/${table}`, {headers: {'Authorization': `Bearer ${token}`}});
   }
 
@@ -61,9 +62,15 @@ export class ApiService {
     return this.http.post(`${this.server}/${table}`, data, {headers: {'Authorization': `Bearer ${token}`}});
   }
 
-  update(){}
+  update(table: string, data: object){
+    const token = this.getToken();
+    return this.http.patch(`${this.server}/${table}`, data, {headers: {'Authorization': `Bearer ${token}`}});
+  }
 
-  delete(){}
+  delete(table: string, id: number){
+    const token = this.getToken();
+    return this.http.delete(`${this.server}/${table}/${id}`, {headers: {'Authorization': `Bearer ${token}`}});
+  }
 
   deleteAll(){}
 

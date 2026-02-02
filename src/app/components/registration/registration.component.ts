@@ -29,14 +29,15 @@ export class RegistrationComponent {
   user: User = {
     id: 0,
     email: '',
-    name: this.firstName + ' ' + this.lastName,
+    name: '',
     password: '',
     confirmPassword: '',
-    phone: '',
+    phone: '345365667',
     role: 'user'
   };
 
   saveUser() {
+    this.user.name = this.firstName + ' ' + this.lastName;
     this.api.registration('users', this.user).subscribe({
       next: (res) => {
         console.log('User registered successfully:', res);

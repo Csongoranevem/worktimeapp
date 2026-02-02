@@ -1,42 +1,53 @@
-import { Component, OnInit } from '@angular/core';
-import { User } from '../../interfaces/user';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { ApiService } from '../../services/api.service';
-import { AuthService } from '../../services/auth.service';
-import { Router } from '@angular/router';
-import { TableModule } from 'primeng/table'; 
-
+import { User } from '../../interfaces/user';
+import { Table, TableModule } from 'primeng/table';
+import { InputSwitchModule } from 'primeng/inputswitch';
+import { FormsModule } from '@angular/forms';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
+import { InputTextModule } from 'primeng/inputtext';
 
 @Component({
   selector: 'app-users',
   standalone: true,
-  imports: [TableModule],
+  imports: [TableModule, InputSwitchModule, FormsModule, IconFieldModule, InputIconModule, InputTextModule],
   templateUrl: './users.component.html',
   styleUrl: './users.component.scss'
 })
-export class UsersComponent implements OnInit{
+export class UsersComponent implements OnInit {
 
-  users:any = [];
+  @ViewChild('dt') dt!: Table;
+  users: User[] = [];
+  filterValue: string = '';
+  filterFields: string[] = ['name', 'email'];
 
   constructor(
-    private api: ApiService,
-    private auth: AuthService
-  ) {}
-
+    private api:ApiService
+  ){}
 
   ngOnInit(): void {
-    this.getUsers()
-    console.log(this.users);
+      this.getUsers();
   }
 
-
-  getUsers() {
+  getUsers(){
     this.api.selectAll('users').subscribe({
-      next: (u) => {
-        this.users = u as User[];
+      next: (res)=>{
+         this.users = res as User[];
+         this.users.forEach(user => {
+          user.role = (user.role) ? user.role : 'User';
+         });
       },
-      error: (error) => {
-        console.error('Error fetching users:', error);
+      error: (err)=>{
+        console.log(err.error.error)
       }
     });
   }
+
+  handleInput(event: Event): void {
+    const inputElement = event.target as HTMLInputElement;
+    this.filterValue = inputElement.value;
+    this.dt.filterGlobal((this.filterValue), 'contains');
+  }
+
 }
