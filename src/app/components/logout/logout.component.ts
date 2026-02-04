@@ -9,17 +9,17 @@ import { Router } from '@angular/router';
   templateUrl: './logout.component.html',
   styleUrl: './logout.component.scss'
 })
-export class LogoutComponent implements OnInit {
+
+export class LogoutComponent implements OnInit{
 
   constructor(
     private auth: AuthService,
     private router: Router
-  ) { }
+  ){}
 
   ngOnInit(): void {
     this.auth.logout();
-    this.router.navigate(['/login']);
+    this.router.navigateByUrl('login');
   }
 
 }
-

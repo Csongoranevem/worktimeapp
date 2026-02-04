@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { environment } from '../../environments/environment.production';
+import { environment } from '../../environments/environment';
 import { BehaviorSubject } from 'rxjs';
 
 @Injectable({
@@ -10,15 +10,27 @@ export class AuthService {
 
   constructor() { }
 
-  private server = environment.serverUrl;
   private tokenName = environment.tokenName;
 
-  private isLoggedIn  = new BehaviorSubject<boolean>(false);
+  private isLoggedIn = new BehaviorSubject<boolean>(this.getToken());
   isLoggedIn$ = this.isLoggedIn.asObservable();
+
+  getToken(){
+    const sess = sessionStorage.getItem(this.tokenName);
+    if (sess) return true;
+
+    const locs = localStorage.getItem(this.tokenName);
+
+    if (locs) {
+      sessionStorage.setItem(this.tokenName, locs);
+      return true;
+    }
+
+    return false;
+  }
 
   login(token:string){
     sessionStorage.setItem(this.tokenName, token);
-    console.log('AuthService login, token stored:', token);
     this.isLoggedIn.next(true);
   }
 
@@ -28,31 +40,24 @@ export class AuthService {
     this.isLoggedIn.next(false);
   }
 
-  loggedUser(){
+  LoggedUser(){
     const token = sessionStorage.getItem(this.tokenName);
-    if(token){
-      return token; // itt kell visszaadni a felhasználót
+    if (token){
+      return token;  //TODO: itt még matatni kell
     }
     return null;
   }
 
-  storeUser(token:string){
+  storeUser(token: string){
     localStorage.setItem(this.tokenName, token);
-
   }
 
   isLoggedUser():boolean{
     return this.isLoggedIn.value;
   }
 
-
-  getToken():boolean{
-    const loc = localStorage.getItem(this.tokenName);
-    if(loc){
-      sessionStorage.setItem(this.tokenName, loc);
-      return true
-    }
-    return false;
-
+  isAdmin():boolean {
+    const user: any = this.LoggedUser();
+    return user.role === 'admin';
   }
 }

@@ -1,10 +1,15 @@
 export interface User {
-  id: number;
-  email: string;
+  id: string;
   name: string;
+  email: string;
   password: string;
-  confirmPassword: string;
-  phone: string;
+  confirm: string;
   role: string;
-
+  secret: string;
+  phone?: string;
+  address?: string;
+  description? :string;
+  reg: Date;
+  last?: Date;
+  status: boolean;
 }

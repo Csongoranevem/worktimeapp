@@ -1,93 +1,91 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ApiService } from '../../services/api.service';
-import { MenuItem } from 'primeng/api';
 import { MenubarModule } from 'primeng/menubar';
-import { Router, RouterLink } from '@angular/router';
+import { MenuItem } from 'primeng/api';
 import { AuthService } from '../../services/auth.service';
-import { CommonModule } from '@angular/common';
-
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [MenubarModule, RouterLink, CommonModule],
+  imports: [MenubarModule],
   templateUrl: './navbar.component.html',
-  styleUrls: ['./navbar.component.scss']
+  styleUrl: './navbar.component.scss'
 })
-export class NavbarComponent {
+
+export class NavbarComponent implements OnInit {
+
   constructor(
     private api: ApiService,
     private auth: AuthService,
     private router: Router
   ) { }
 
-  items: MenuItem[] | undefined = [];
+  items: MenuItem[] | undefined;
   isLoggedIn: boolean = false;
 
-  ngOnInit() {
+  ngOnInit(): void {
 
-    this.auth.isLoggedIn$.subscribe(loggedIn => {
-      this.isLoggedIn = loggedIn;
+    this.auth.isLoggedIn$.subscribe(isLoggedIn => {
+      this.isLoggedIn = isLoggedIn;
       setTimeout(() => {
-        this.setUpMenu();
+        this.setupMenu();
       }, 50);
-
-      if (loggedIn) {
-        this.router.navigate(['/home']);
-      }
     });
+
+    if (this.isLoggedIn) {
+      this.router.navigateByUrl('home');
+    }
+
   }
 
+  setupMenu() {
 
-  setUpMenu() {
     this.items = [
-      //always visible
+
+      // always visible
+
       {
         label: 'Home',
-        icon: 'pi pi-fw pi-home',
+        icon: 'pi pi-home',
         routerLink: '/home'
       },
-      // visible only when not logged in
-      {
-        label: 'Login',
-        icon: 'pi pi-fw pi-sign-in',
-        routerLink: '/login'
-      },
 
-      {
-        label: 'Registration',
-        icon: 'pi pi-fw pi-user-plus',
-        routerLink: '/registration'
-      },
+      // isLoggedIn true or false
 
-      // visible only when logged in
-
-      ...(this.isLoggedIn) ? [{
-        label: 'Statistics',
-        icon: 'pi pi-fw pi-chart-bar',
-        routerLink: '/statistics'
-      },
-
-
-      {
-        label: 'Worktimes',
-        icon: 'pi pi-fw pi-clock',
-        routerLink: '/worktimes'
-      },
-
-      {
-        label: 'Users',
-        icon: 'pi pi-fw pi-users',
-        routerLink: '/users'
-      },
-
-      {
-        label: 'Logout',
-        icon: 'pi pi-fw pi-sign-out',
-        routerLink: '/logout'
-      }] : []
+      ...(this.isLoggedIn) ? [
+        {
+          label: 'Users',
+          icon: 'pi pi-users',
+          routerLink: '/users'
+        },
+        {
+          label: 'Worktimes',
+          icon: 'pi pi-clock',
+          routerLink: '/worktimes'
+        },
+        {
+          label: 'Statistics',
+          icon: 'pi pi-chart-pie',
+          routerLink: '/statistics'
+        },
+        {
+          label: 'Logout',
+          icon: 'pi pi-sign-out',
+          routerLink: '/logout'
+        },
+      ] : [
+        {
+          label: 'Login',
+          icon: 'pi pi-sign-in',
+          routerLink: '/login'
+        },
+        {
+          label: 'Registration',
+          icon: 'pi pi-user-plus',
+          routerLink: '/registration'
+        }
+      ]
     ]
-
   }
-
 }

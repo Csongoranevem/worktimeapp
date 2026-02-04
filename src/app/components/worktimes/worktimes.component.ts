@@ -1,148 +1,119 @@
-import { Component, OnInit } from '@angular/core';
-import { User } from '../../interfaces/user';
-import { WorkTime } from '../../interfaces/worktimes';
-import { ApiService } from '../../services/api.service';
-import { FloatLabel } from 'primeng/floatlabel';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DropdownModule } from 'primeng/dropdown';
-import { DatePickerModule } from 'primeng/datepicker';
+import { FloatLabelModule } from "primeng/floatlabel"
+import { User } from '../../interfaces/user';
+import { Worktime } from '../../interfaces/worktime';
+import { ApiService } from '../../services/api.service';
+import { Table, TableModule } from 'primeng/table';
+import { IconFieldModule } from 'primeng/iconfield';
+import { InputIconModule } from 'primeng/inputicon';
+import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
-import { DialogModule } from 'primeng/dialog';
-import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import moment from 'moment';
-
 
 @Component({
   selector: 'app-worktimes',
   standalone: true,
-  imports: [FloatLabel, FormsModule, DropdownModule, DatePickerModule, ButtonModule, DialogModule, CommonModule],
+  imports: [
+    DropdownModule,
+    FloatLabelModule,
+    FormsModule,
+    TableModule,
+    IconFieldModule,
+    InputIconModule,
+    InputTextModule,
+    ButtonModule,
+    RouterModule
+  ],
   templateUrl: './worktimes.component.html',
-  styleUrls: ['./worktimes.component.scss']
+  styleUrl: './worktimes.component.scss'
 })
+
 export class WorktimesComponent implements OnInit {
+  @ViewChild('dt') dt!: Table;
+  filterValue: string = '';
+  filterFields: string[] = ['name', 'email'];
+
+  users: User[] = [];
+  selectedUser: string | null = null;
+
+  worktimes: Worktime[] = [];
 
   constructor(
-    private api: ApiService
-  ) { }
+    private api: ApiService,
+  ){}
 
   ngOnInit(): void {
     this.getUsers();
   }
 
-  isEditMode: boolean = false;
-
-  users: User[] = [];
-  selectedUser: User | null = null;
-  newWorkTime: WorkTime = {
-    id: 0,
-    userId: 0,
-    startTime: (moment(new Date()).format('YYYY-MM-DD HH:mm:ss')),
-    endTime: (moment(new Date()).format('YYYY-MM-DD HH:mm:ss')),
-    duration: 0
-  };
-  showDialog: boolean = false;
-
-  worktimes: WorkTime[] = [];
-
-
-
-  getUsers() {
+  getUsers(){
     this.api.selectAll('users').subscribe({
       next: (res) => {
         this.users = res as User[];
-      },
-      error: (error) => {
-        console.error('Error fetching users:', error);
-      }
-    });
+        this.users.forEach(user => {
+          user.name = user.name + ' (' + user.email + ')';
+        });
 
-    this.getWorkTimes();
-  }
+        this.users.sort((a,b) => a.name.localeCompare(b.name));
+        this.getWorktimes(null);
 
-  getWorkTimes() {
-    this.api.selectAll('worktimes').subscribe({
-      next: (res) => {
-        this.worktimes = res as WorkTime[];
       },
-      error: (error) => {
-        console.error('Error fetching work times:', error);
+      error: (err)=>{
+        console.log(err.error.error)
       }
     });
   }
 
-
-  createNewWorkTime() {
-
-    // Open dialog here
-    this.showDialog = true;
-
-    if (this.selectedUser) {
-      this.newWorkTime.userId = this.selectedUser!.id;
+  changeUser(){
+    if (this.selectedUser){
+      this.getWorktimes(this.selectedUser);
+    } else {
+      this.getWorktimes(null)
     }
-
-
   }
 
-
-
-  saveWorkTime() {
-    if (this.newWorkTime && !this.isEditMode) {
-      this.api.insert('worktimes', this.newWorkTime).subscribe({
-        next: (res) => {
-          this.worktimes.push(res as WorkTime);
+  getWorktimes(id: string | null){
+    console.log(id)
+    if (id){
+      this.api.selectByField('worktimes', 'userId', 'eq', id).subscribe({
+        next: (res) =>{
+          this.worktimes = res as Worktime[];
+          this.worktimes.forEach(worktime => {
+            worktime.date = moment(worktime.date).format('YYYY-MM-DD');
+            worktime.user = this.users.find(u => u.id == worktime.userId) || null;
+          });
         },
-        error: (error) => {
-          console.error('Error creating work time:', error);
+        error: (err) => {
+          console.log(err.error.error);
         }
       });
-    if (this.newWorkTime && this.isEditMode) {
-        this.api.update('worktimes', this.newWorkTime).subscribe({
-          next: (res) => {
-            const index = this.worktimes.findIndex(w => w.id === this.newWorkTime.id);
-            if (index !== -1) {
-              this.worktimes[index] = res as WorkTime;
-            }
-          },
-          error: (error) => {
-            console.error('Error updating work time:', error);
-          }
-        });
-      }
+    } else {
+      this.api.selectAll('worktimes').subscribe({
+        next: (res) =>{
+          this.worktimes = res as Worktime[];
+          this.worktimes.forEach(worktime => {
+            worktime.date = moment(worktime.date).format('YYYY-MM-DD');
+            worktime.user = this.users.find(u => u.id == worktime.userId) || null;
+          });
+        },
+        error: (err) => {
+          console.log(err.error.error);
+        }
+      });
     }
-
-    this.closeModal();
   }
 
-  closeModal() {
-    this.showDialog = false;
-    this.newWorkTime = {
-      id: 0,
-      userId: 0,
-      startTime: moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
-      endTime: moment(new Date()).format('YYYY-MM-DD HH:mm:ss'),
-      duration: 0
-    };
+  delete(id: string){
 
-    this.ngOnInit();
   }
 
-
-
-  deleteWorkTime(id: number) {
-    this.api.delete('worktimes', id).subscribe({
-      next: () => {
-        this.worktimes = this.worktimes.filter(w => w.id !== id);
-      },
-      error: (error) => {
-        console.error('Error deleting work time:', error);
-      }
-    });
-  }
-
-  editWorkTime(workTime: WorkTime) {
-    this.newWorkTime = { ...workTime };
-    this.showDialog = true;
-    this.isEditMode = true;
+  handleInput(event: Event): void {
+    const inputElement = event.target as HTMLInputElement;
+    this.filterValue = inputElement.value;
+    this.dt.filterGlobal((this.filterValue), 'contains');
   }
 
 }

@@ -1,61 +1,65 @@
 import { Component } from '@angular/core';
-import { ApiService } from '../../services/api.service';
-import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ButtonModule } from 'primeng/button';
 import { FloatLabelModule } from 'primeng/floatlabel';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
-import { ButtonModule } from 'primeng/button';
-import { CheckboxModule } from 'primeng/checkbox';
-import { AuthService } from '../../services/auth.service';
+import { User } from '../../interfaces/user';
+import { ApiService } from '../../services/api.service';
 import { Router } from '@angular/router';
-
+import { AuthService } from '../../services/auth.service';
+import { CheckboxModule } from 'primeng/checkbox';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    FloatLabelModule,
-    InputTextModule,
-    PasswordModule,
-    ButtonModule,
-    CheckboxModule
-  ],
+  imports: [InputTextModule, FloatLabelModule, FormsModule, PasswordModule, ButtonModule, CheckboxModule],
   templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss']
+  styleUrl: './login.component.scss'
 })
 export class LoginComponent {
 
-  password: string = '';
-  email: string = '';
+  keepLoggedIn: boolean =false;
+
+  user:User = {
+    id: '',
+    name: '',
+    email: '',
+    password: '',
+    confirm: '',
+    role: '',
+    secret: '',
+    reg: new Date(),
+    status: false
+  }
 
   constructor(
-    private apiService: ApiService,
+    private api: ApiService,
     private auth: AuthService,
     private router: Router
-  ) { }
+  ){}
 
-  login() {
-    const credentials = { email: this.email, password: this.password };
-    this.apiService.login(credentials).subscribe({
-      next: (res: any) => {
-        // Accept either a raw token string or an object with a token property
-        const token = typeof res === 'string' ? res : (res?.token || res?.accessToken || res?.data?.token);
-        if (token) {
-          this.auth.login(token);
-          this.router.navigate(['/home']);
-        } else {
-          console.error('Login succeeded but no token returned', res);
+  login(){
+
+    let data = {
+      email: this.user.email,
+      password: this.user.password
+    }
+
+    this.api.login('users', data).subscribe({
+      next: (res)=>{
+        this.auth.login((res as any).token);
+        if (this.keepLoggedIn) {
+          this.auth.storeUser((res as any).token);
         }
+        alert('Sikeres belépés!');
+        this.router.navigateByUrl('/home');
       },
-      error: (err) => {
-        console.error('Login error', err);
+      error: (err)=>{
+        console.log(err);
+        alert(err.error.error);
       }
     });
   }
 
-
-  
 }

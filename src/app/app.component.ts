@@ -12,12 +12,9 @@ import { CommonModule } from '@angular/common';
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
+
 export class AppComponent {
-  title = 'worktimes';
+  title = 'worktimeapp';
   loading$ = inject(LoadingService).loading$;
-
-
-  constructor(
-  ) { }
 
 }

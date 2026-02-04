@@ -7,14 +7,14 @@ import { BehaviorSubject } from 'rxjs';
 export class LoadingService {
   private readonly loadingSubject = new BehaviorSubject<boolean>(false);
   private loadingCount = 0;
-  readonly loading$ = this.loadingSubject.asObservable();
+  loading$ = this.loadingSubject.asObservable();
 
-  show() {
+  show(){
     this.loadingCount++;
-    this.loadingSubject.next(true);
+    this.emitLoadingState(true);
   }
 
-  hide() {
+  hide(){
     if (this.loadingCount === 0) {
       return;
     }
@@ -22,14 +22,12 @@ export class LoadingService {
     this.loadingCount--;
 
     if (this.loadingCount === 0) {
-      this.loadingSubject.next(false);
       this.emitLoadingState(false);
     }
   }
 
-  private emitLoadingState(isLoading: boolean) {
-    Promise.resolve().then(() => {
-      this.loadingSubject.next(isLoading);
-    });
+  private emitLoadingState(isLoading: boolean){
+    Promise.resolve().then(() => this.loadingSubject.next(isLoading));
   }
+
 }

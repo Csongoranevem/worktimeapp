@@ -17,8 +17,8 @@ import { InputTextModule } from 'primeng/inputtext';
 })
 export class UsersComponent implements OnInit {
 
-  @ViewChild('dt') dt!: Table;
   users: User[] = [];
+  @ViewChild('dt') dt!: Table;
   filterValue: string = '';
   filterFields: string[] = ['name', 'email'];
 
@@ -35,7 +35,7 @@ export class UsersComponent implements OnInit {
       next: (res)=>{
          this.users = res as User[];
          this.users.forEach(user => {
-          user.role = (user.role) ? user.role : 'User';
+          user.status = (user.status) ? true : false
          });
       },
       error: (err)=>{

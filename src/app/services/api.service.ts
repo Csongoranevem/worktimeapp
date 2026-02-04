@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../environments/environment';
-import { HttpClient } from '@angular/common/http';
-import { Header } from 'primeng/api';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+
 
 @Injectable({
   providedIn: 'root'
@@ -9,68 +9,76 @@ import { Header } from 'primeng/api';
 export class ApiService {
 
   private server = environment.serverUrl;
-
+  private tokenName = environment.tokenName;
 
   constructor(private http: HttpClient) { }
 
-  //public endpoints
+  getToken(): String | null {
+    return sessionStorage.getItem(this.tokenName);
+  }
+
+  tokenHeader():{ headers: HttpHeaders }{
+
+    let token = this.getToken();
+
+    const headers = new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+
+    return { headers }
+  }
+
+  // PUBLIC ENDPOINTS --------------------------------------------------------------
 
   registration(table: string, data: object){
     return this.http.post(`${this.server}/${table}/registration`, data);
   }
 
-  login(data: object){
-    return this.http.post(`${this.server}/users/login`, data);
+  login(table: string, data: object){
+    return this.http.post(`${this.server}/${table}/login`, data);
   }
 
-  lostpass(){}
+ // lostpass(){}
 
-  restorepass(){}
+ // restorepass(){}
 
-  readById(table: string, id: number){
+  readById(table: string, id: string){
     return this.http.get(`${this.server}/public/${table}/${id}`);
   }
 
   readByField(table: string, field: string, op: string, value: string){
-    return this.http.get(`${this.server}/${table}/${field}/${op}/${value}`);
+    return this.http.get(`${this.server}/public/${table}/${field}/${op}/${value}`);
   }
 
-  readAll(table : string){
+  readAll(table: string){
     return this.http.get(`${this.server}/public/${table}`);
   }
-  
-  sendMail(){}
 
-  //private endpoints
+  sendMail(data: object){
+    return this.http.post(`${this.server}/sendmail`, data);
+  }
 
-  selectById(table: string, id: number){
+  // PRIVATE ENDPOINTS --------------------------------------------------------------
+
+  selectById(table: string, id: string){
     return this.http.get(`${this.server}/${table}/${id}`, this.tokenHeader());
   }
 
   selectByField(table: string, field: string, op: string, value: string){
-    return this.http.get(`${this.server}/${table}/${field}/${op}/${value}`);
+    return this.http.get(`${this.server}/${table}/${field}/${op}/${value}`, this.tokenHeader());
   }
 
   selectAll(table: string){
-    const token = sessionStorage.getItem('token') || '';
-    console.log('Token in selectAll:', token);
-    return this.http.get(`${this.server}/${table}`, {headers: {'Authorization': `Bearer ${token}`}});
+    return this.http.get(`${this.server}/${table}`, this.tokenHeader());
   }
 
   insert(table: string, data: object){
-    const token = this.getToken();
-    return this.http.post(`${this.server}/${table}`, data, {headers: {'Authorization': `Bearer ${token}`}});
+    return this.http.post(`${this.server}/${table}`, data, this.tokenHeader());
   }
 
-  update(table: string, data: object){
-    const token = this.getToken();
-    return this.http.patch(`${this.server}/${table}`, data, {headers: {'Authorization': `Bearer ${token}`}});
-  }
+  update(){}
 
-  delete(table: string, id: number){
-    const token = this.getToken();
-    return this.http.delete(`${this.server}/${table}/${id}`, {headers: {'Authorization': `Bearer ${token}`}});
-  }
+  delete(){}
 
   deleteAll(){}
 
@@ -79,15 +87,5 @@ export class ApiService {
   downloadFile(){}
 
   deleteFile(){}
-
-
-  getToken(){
-    return sessionStorage.getItem('token') || '';
-  }
-
-  tokenHeader(){
-    let token = this.getToken();
-    return {headers: {'Authorization': `Bearer ${token}`}};
-  }
 
 }

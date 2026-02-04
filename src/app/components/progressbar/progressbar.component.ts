@@ -8,6 +8,7 @@ import { ProgressBarModule } from 'primeng/progressbar';
   templateUrl: './progressbar.component.html',
   styleUrl: './progressbar.component.scss'
 })
+
 export class ProgressbarComponent {
 
 }

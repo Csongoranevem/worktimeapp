@@ -1,51 +1,65 @@
-import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { FloatLabelModule } from 'primeng/floatlabel';
+import { Component, OnInit } from '@angular/core';
 import { InputTextModule } from 'primeng/inputtext';
+import { FloatLabelModule } from 'primeng/floatlabel';
+import { FormsModule } from '@angular/forms';
 import { PasswordModule } from 'primeng/password';
-import { ApiService } from '../../services/api.service';
-import { User } from '../../interfaces/user';
-import { Router } from '@angular/router';
 import { ButtonModule } from 'primeng/button';
+import { User } from '../../interfaces/user';
+import { ApiService } from '../../services/api.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-registration',
   standalone: true,
-  imports: [CommonModule, FloatLabelModule, InputTextModule, PasswordModule, FormsModule, ButtonModule],
+  imports: [InputTextModule, FloatLabelModule, FormsModule, PasswordModule, ButtonModule],
   templateUrl: './registration.component.html',
   styleUrl: './registration.component.scss'
 })
-export class RegistrationComponent {
+
+export class RegistrationComponent implements OnInit {
+
+  user: User = {
+    id: '',
+    name: '',
+    email: '',
+    password: '',
+    confirm: '',
+    role: '',
+    secret: '',
+    reg: new Date(),
+    status: false
+  }
 
   constructor(
     private api: ApiService,
     private router: Router
-  ) { }
+  ){}
 
-  firstName: string = '';
-  lastName: string = '';
+  ngOnInit(): void {
 
-  user: User = {
-    id: 0,
-    email: '',
-    name: '',
-    password: '',
-    confirmPassword: '',
-    phone: '345365667',
-    role: 'user'
-  };
+  }
 
-  saveUser() {
-    this.user.name = this.firstName + ' ' + this.lastName;
-    this.api.registration('users', this.user).subscribe({
-      next: (res) => {
-        console.log('User registered successfully:', res);
-        this.router.navigate(['/login']);
+  save(){
+
+    let data = {
+      name: this.user.name,
+      email: this.user.email,
+      password: this.user.password,
+      confirm: this.user.confirm,
+      phone: '',
+      address: ''
+    }
+
+    this.api.registration('users', data).subscribe({
+      next: (res)=>{
+        alert('Sikeres regisztráció! Bejelentkezhetsz!');
+        this.router.navigateByUrl('/login');
       },
-      error: (error) => {
-        console.error('Error registering user:', error);
+      error: (err)=>{
+        console.log(err);
+        alert(err.error.error);
       }
     });
   }
+
 }

@@ -1,16 +1,28 @@
-<div class="card xs:col-12 md:col-6 mx-auto px-3 text-center" id="registration-card">
-    <h1>Login</h1>
-    <div class="mb-4">
-        <input pInputText type="email" placeholder="Email" [(ngModel)]="email" class="w-full" />
-    </div>
+<div class="card xs:col-12 md:col-6 lg:col-4 mx-auto px-3 text-center">
 
-    <div class="mb-4">
-        <p-password class="w-full" placeholder="Password" [(ngModel)]="password" [toggleMask]="true"></p-password>
-    </div>
-    
-    <div class="mb-4">
-        <p-checkbox id="rememberMe" label="Remember Me" class="mb-4"></p-checkbox>
-        <label for="rememberMe">Remember Me</label>
-    </div>
+  <h1>Login</h1>
 
-<p-button label="Login" (click)="login()"></p-button>
+  <h3>Please sing in with your account</h3>
+
+  <div class="mb-4">
+    <p-floatLabel>
+      <input pInputText id="email" [(ngModel)]="user.email" class="w-full" />
+      <label for="email">E-mail address</label>
+    </p-floatLabel>
+  </div>
+
+  <div class="mb-4">
+    <p-floatLabel>
+      <p-password [(ngModel)]="user.password" [feedback]="false" class="w-full" [toggleMask]="true" />
+      <label for="password">Password</label>
+    </p-floatLabel>
+  </div>
+
+  <div class="mb-4">
+    <p-checkbox [(ngModel)] = "keepLoggedIn" [binary]="true"  />
+    <label for="ny"> Keep me logged in</label>
+  </div>
+
+  <p-button label="Login" icon="pi pi-sign-in" (click) = "login()" />
+
+</div>
