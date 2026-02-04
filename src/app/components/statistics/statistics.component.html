@@ -1,1 +1,6 @@
-<p>statistics works!</p>
+
+<p-datepicker [(ngModel)]="date" dateFormat="dd.mm.yy" class="mb-4"
+onchange="refreshChart()">
+</p-datepicker>
+
+<p-chart type="line" [data]="data" [options]="options" class="h-[30rem]" />

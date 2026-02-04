@@ -76,6 +76,7 @@
               <td class="text-right">
                 <p-button icon="pi pi-pencil" class="mr-2" routerLink="/worktimes/{{worktime.id}}" severity="warning" [text]="true"></p-button>
                 <p-button icon="pi pi-trash" (click)="delete(worktime.id)" severity="danger" [text]="true"></p-button>
+                <!--<p-button icon="pi pi-refresh" (click)="updateStatus(worktime.id)" severity="info" [text]="true"></p-button>-->
               </td>
           </tr>
       </ng-template>

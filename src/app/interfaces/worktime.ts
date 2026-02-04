@@ -7,4 +7,5 @@ export interface Worktime {
   date: string | Date;
   startTime: string;
   endTime: string;
+  status?: 'active' | 'inactive';
 }

@@ -23,22 +23,22 @@ export class UsersComponent implements OnInit {
   filterFields: string[] = ['name', 'email'];
 
   constructor(
-    private api:ApiService
-  ){}
+    private api: ApiService
+  ) { }
 
   ngOnInit(): void {
-      this.getUsers();
+    this.getUsers();
   }
 
-  getUsers(){
+  getUsers() {
     this.api.selectAll('users').subscribe({
-      next: (res)=>{
-         this.users = res as User[];
-         this.users.forEach(user => {
+      next: (res) => {
+        this.users = res as User[];
+        this.users.forEach(user => {
           user.status = (user.status) ? true : false
-         });
+        });
       },
-      error: (err)=>{
+      error: (err) => {
         console.log(err.error.error)
       }
     });
@@ -50,4 +50,19 @@ export class UsersComponent implements OnInit {
     this.dt.filterGlobal((this.filterValue), 'contains');
   }
 
+
+
+  updateStatus(userId: string, status: boolean) {
+    this.api.update('users', userId, { status: !status }).subscribe({
+      next: () => {
+        const user = this.users.find(u => u.id === userId);
+        if (user) {
+          user.status = !status;
+        }
+      },
+      error: (err) => {
+        console.log(err.error.error);
+      }
+    });
+  }
 }

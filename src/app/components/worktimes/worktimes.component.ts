@@ -123,4 +123,5 @@ export class WorktimesComponent implements OnInit {
     this.dt.filterGlobal((this.filterValue), 'contains');
   }
 
+
 }
