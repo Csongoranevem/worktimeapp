@@ -5,6 +5,6 @@ export interface Worktime {
   userId: string;
   user?: User | null;
   date: string | Date;
-  start: string;
-  end: string;
+  startTime: string;
+  endTime: string;
 }

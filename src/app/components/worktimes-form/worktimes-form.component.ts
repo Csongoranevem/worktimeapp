@@ -32,8 +32,8 @@ export class WorktimesFormComponent implements OnInit{
     id: '',
     userId: '',
     date: new Date(),
-    start: '08:00',
-    end: '16:00'
+    startTime: '08:00',
+    endTime: '16:00'
   }
 
   constructor(
@@ -65,9 +65,11 @@ export class WorktimesFormComponent implements OnInit{
     let data:Worktime = {
       userId: this.worktime.userId,
       date:  moment(this.worktime.date).format('YYYY-MM-DD'),
-      start: moment(this.worktime.start).format('HH:mm'),
-      end: moment(this.worktime.end).format('HH:mm')
+      startTime: moment(this.worktime.startTime).format('HH:mm'),
+      endTime: moment(this.worktime.endTime).format('HH:mm')
     }
+
+    console.log(data.startTime);
 
     this.api.insert('worktimes', data).subscribe({
       next: (res) => {

@@ -78,7 +78,9 @@ export class ApiService {
 
   update(){}
 
-  delete(){}
+  delete(table: string, id: string){
+    return this.http.delete(`${this.server}/${table}/${id}`, this.tokenHeader());
+  }
 
   deleteAll(){}
 

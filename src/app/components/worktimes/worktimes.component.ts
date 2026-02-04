@@ -107,7 +107,14 @@ export class WorktimesComponent implements OnInit {
   }
 
   delete(id: string){
-
+    this.api.delete('worktimes', id).subscribe({
+      next: () => {
+        this.worktimes = this.worktimes.filter(w => w.id !== id);
+      },
+      error: (err) => {
+        console.log(err.error.error);
+      }
+    });
   }
 
   handleInput(event: Event): void {

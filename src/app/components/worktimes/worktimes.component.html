@@ -61,8 +61,8 @@
               <th>#</th>
               <th pSortableColumn="date" >Date <p-sortIcon field="date" /></th>
               <th pSortableColumn="user.name">User<p-sortIcon field="user.name" /></th>
-              <th pSortableColumn="start">Start <p-sortIcon field="start" /></th>
-              <th pSortableColumn="end">End <p-sortIcon field="end" /></th>
+              <th pSortableColumn="startTime">Start <p-sortIcon field="startTime" /></th>
+              <th pSortableColumn="endTime">End <p-sortIcon field="endTime" /></th>
               <th  class="text-right">Operations</th>
           </tr>
       </ng-template>
@@ -71,8 +71,8 @@
               <td>{{ rowIndex +1 }}.</td>
               <td>{{ worktime.date }}</td>
               <td>{{ worktime.user!.name }}</td>
-              <td>{{ worktime.start }}</td>
-              <td>{{ worktime.end }}</td>
+              <td>{{ worktime.startTime }}</td>
+              <td>{{ worktime.endTime }}</td>
               <td class="text-right">
                 <p-button icon="pi pi-pencil" class="mr-2" routerLink="/worktimes/{{worktime.id}}" severity="warning" [text]="true"></p-button>
                 <p-button icon="pi pi-trash" (click)="delete(worktime.id)" severity="danger" [text]="true"></p-button>
