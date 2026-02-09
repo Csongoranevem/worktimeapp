@@ -1,6 +1,6 @@
 
-<p-datepicker [(ngModel)]="date" dateFormat="dd.mm.yy" class="mb-4"
-onchange="refreshChart()">
-</p-datepicker>
+<p-calendar [(ngModel)]="date" dateFormat="dd.mm.yy" class="mb-4 mx-auto"
+(click)="refreshData()">
+</p-calendar>
 
 <p-chart type="line" [data]="data" [options]="options" class="h-[30rem]" />

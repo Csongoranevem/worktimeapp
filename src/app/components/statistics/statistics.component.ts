@@ -5,6 +5,7 @@ import { ChartModule } from 'primeng/chart';
 import { CalendarModule } from 'primeng/calendar';
 import { User } from '../../interfaces/user';
 import { ApiService } from '../../services/api.service';
+import moment from 'moment';
 
 @Component({
   selector: 'app-statistics',
@@ -20,18 +21,38 @@ export class StatisticsComponent implements OnInit {
   date: Date = new Date();
   users: User[] = [];
 
+  monthDays: string[] = [];
+
+  avgWorkTimesPerDays: number[] = [];
+
+  countUsersWithDataPerDay: number[] = [];
+
   constructor(
     private api: ApiService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
+    this.refreshData();
+  }
+
+  refreshData() {
+    this.getUsers();
+    this.getMonthDays(this.date);
+    this.getAvgWorkTimes(this.date, this.users.map(user => user.id)[0]);
+    this.renderChart();
+    this.users.forEach(user => {
+      this.getUserWorkTimes(this.date, user.id);
+    });
+  }
+
+  renderChart() {
     const documentStyle = getComputedStyle(document.documentElement);
     const textColor = documentStyle.getPropertyValue('--text-color');
     const textColorSecondary = documentStyle.getPropertyValue('--text-color-secondary');
     const surfaceBorder = documentStyle.getPropertyValue('--surface-border');
 
     this.data = {
-      labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
+      labels: this.monthDays,
       datasets: [
         {
           type: 'line',
@@ -40,13 +61,13 @@ export class StatisticsComponent implements OnInit {
           borderWidth: 2,
           fill: false,
           tension: 0.4,
-          data: [50, 25, 12, 48, 56, 76, 42]
+          data: this.avgWorkTimesPerDays
         },
         {
           type: 'bar',
           label: 'Dataset 2',
           backgroundColor: documentStyle.getPropertyValue('--green-500'),
-          data: [21, 84, 24, 75, 37, 65, 34],
+          data: [],
           borderColor: 'white',
           borderWidth: 2
         },
@@ -54,7 +75,7 @@ export class StatisticsComponent implements OnInit {
           type: 'bar',
           label: 'Dataset 3',
           backgroundColor: documentStyle.getPropertyValue('--orange-500'),
-          data: [41, 52, 24, 74, 23, 21, 32]
+          data: []
         }
       ]
     };
@@ -88,26 +109,49 @@ export class StatisticsComponent implements OnInit {
         }
       }
     };
+
   }
 
-  refreshChart() {
-    this.getMonthDays(this.date);
-    this.getAvgWorkTimes(this.date);
-    this.getUsers();
-    this.users.forEach(user => {
-      this.getUserWorkTimes(this.date, user.id);
+  getMonthDays(date: Date) {
+    this.monthDays = [];
+    const y = date.getFullYear();
+    const m = date.getMonth();
+
+    const first = new Date(y, m, 1);
+    const last = new Date(y, m + 1, 0);
+
+
+
+    for (let d = first; d <= last; d.setDate(d.getDate() + 1)) {
+      this.monthDays.push(moment(d).format('MM-DD'));
+
+    }
+
+
+    console.log(this.monthDays);
+
+
+  }
+
+  getAvgWorkTimes(date: Date, userId: string) {
+    this.api.selectByField('worktimes', 'userId', 'eq', userId).subscribe({
+      next: (worktimes) => {
+        this.avgWorkTimesPerDays = worktimes.map(w => w.duration);
+      }
+    });
+
+  }
+
+  getUserWorkTimes(date: Date, userId: string) {
+    this.api.selectByField('worktimes', 'userId', 'eq', userId).subscribe({
+      next: (worktimes) => {
+      }
     });
   }
 
-  getMonthDays(date: Date) {}
-
-  getAvgWorkTimes(date: Date) {}
-
-  getUserWorkTimes(date: Date, userId: string) {}
-
   getUsers() {
     this.api.selectByField('users', 'status', 'eq', '1').subscribe(users => {
-      this.users = users;
+      this.users = users as User[];
     });
   }
 }
