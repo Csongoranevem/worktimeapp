@@ -84,6 +84,10 @@ export class ApiService {
     return this.http.delete(`${this.server}/${table}/${id}`, this.tokenHeader());
   }
 
+  getHolidays(){
+    return this.http.get(`${this.server}/worktimes/holidays`, this.tokenHeader());
+  }
+
   deleteAll(){}
 
   uploadFile(){}

@@ -1,0 +1,13 @@
+<div class="max-auto" id="calendar-container">
+
+<!-- input dropdown with the active users-->
+    <div class="input-dropdown">
+        <label for="active-users">Select Active User:</label>
+        <select id="active-users" class="form-select" [(ngModel)]="userId" name="activeUser" (ngModelChange)="getWorkTimesForUsers($event)">
+            <option *ngFor="let user of users" [value]="user.id">{{ user.name }}</option>
+        </select>
+    </div>
+
+    <div id='calendar' class="mx-auto col col-lg-8 col-md-10 col-sm-12"></div>
+
+</div>

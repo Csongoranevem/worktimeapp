@@ -70,6 +70,11 @@ export class NavbarComponent implements OnInit {
           routerLink: '/statistics'
         },
         {
+          label: 'Calendar',
+          icon: 'pi pi-calendar',
+          routerLink: '/calendar'
+        },
+        {
           label: 'Logout',
           icon: 'pi pi-sign-out',
           routerLink: '/logout'

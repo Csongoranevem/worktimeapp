@@ -1,0 +1,22 @@
+#calendar{
+    max-width: 900px;
+    margin: 40px auto;
+}
+
+
+
+.p-calendar, span{
+    display: block !important;
+    margin: 0 auto !important;
+    justify-content: center !important;
+}
+
+
+#calendar-container {
+    width: 100%;
+    height: 70vh;
+    margin: 40px auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
